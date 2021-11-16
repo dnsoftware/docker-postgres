@@ -1,0 +1,32 @@
+version: '3.5'
+services:
+ 
+  postgres:
+
+#    image: grufos/postgres:14
+    build:
+      context: .
+      dockerfile: Dockerfile
+    shm_size: '2gb'
+    command: |
+      -c shared_preload_libraries='plugin_debugger,pg_stat_statements,auto_explain,pg_buffercache,pg_cron,shared_ispell,pg_prewarm'
+      -c shared_ispell.max_size=70MB
+    volumes:
+      - "./data:/var/lib/postgresql/data"
+      - "./log/postgresql:/var/log/postgresql"
+      - "./mnt/pgbak/:/mnt/pgbak/"
+      - "./tsearch_data:/usr/share/postgresql/tsearch_data"
+    ports:
+      - "54322:5432"
+    environment:
+#      POSTGRES_INITDB_ARGS: "--locale=ru_RU.UTF8 --data-checksums"
+      POSTGRES_PASSWORD: qweasdzxc
+      POSTGRES_HOST_AUTH_METHOD: trust
+      DEPLOY_PASSWORD: qweasdzxc
+#      TZ: "Etc/UTC"
+      TZ: "Europe/Moscow"
+      EMAILTO: "DBA-PostgreSQL@my_name.ru"
+      EMAIL_SERVER: "mail.name.ru"
+      EMAIL_HOSTNAME: "noreplay@my_host.ru"
+      BACKUP_THREADS: "4"
+      BACKUP_MODE: "delta"
